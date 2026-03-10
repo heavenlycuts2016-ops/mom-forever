@@ -414,6 +414,9 @@ function checkWord() {
   if (val === 'lilrenie') {
     document.getElementById('lock-screen').classList.add('hidden');
     document.body.style.overflow = '';
+    // Autoplay the song
+    var yt = document.getElementById('autoplay-song');
+    if (yt) yt.src = yt.src.replace('autoplay=0','autoplay=1');
   } else {
     document.getElementById('lockError').textContent = 'That\'s not it, love. Try again. ♥';
     document.getElementById('lockInput').value = '';
@@ -487,8 +490,8 @@ document.body.style.overflow = 'hidden';
       <p>You gave me more than life. You gave me a foundation. I carry you into every room I walk into, every hard moment I survive, every version of myself I have ever been. You are in all of it.</p>
       <p>We have both been through storms that would have broken people who were not built the way we are built. And we are still here. Still standing. Still us.</p>
       <p>With you, I get to just be Lil Renie. Not the fighter. Not the one holding everything together. Just your daughter. I need that more than you know — and I am not willing to let another season pass without choosing it on purpose.</p>
-      <p>So this is me asking, Mom. Let's make the time. The real kind. The kind money cannot buy and time cannot give back once it is gone.</p>
-      <p>I love you. More than I will ever fully say. But I am going to keep trying.</p>
+      <p>So this is me asking, Mom. Let's choose each other on purpose. The real kind of time — the kind that fills you up and stays with you long after the day is over.</p>
+      <p>I love you more than I will ever fully say. But I am going to keep trying.</p>
     </div>
     <div class="letter-closing">
       Forever your Lil Renie 💜
@@ -505,7 +508,7 @@ document.body.style.overflow = 'hidden';
     <p class="song-artist">A mother's prayer for her child — and a daughter's promise back</p>
     <p class="song-note">Every time I hear this song, I think of you. I think of everything you hoped for me. And I think of everything I hope we still get to share together.</p>
     <div class="yt-embed">
-      <iframe src="https://www.youtube.com/embed/RBRcPFBBFkk?rel=0&modestbranding=1" allowfullscreen title="I Hope You Dance - Lee Ann Womack"></iframe>
+      <iframe id="autoplay-song" src="https://www.youtube.com/embed/RBRcPFBBFkk?rel=0&modestbranding=1&autoplay=0" allowfullscreen title="I Hope You Dance - Lee Ann Womack"></iframe>
     </div>
   </div>
 </div>
@@ -514,10 +517,7 @@ document.body.style.overflow = 'hidden';
 <section class="closing-section">
   <h2 class="closing-title">Let's Make the <em>Time</em></h2>
   <p class="closing-body">
-    Time don't give itself freely.<br/>
-    But we can give it to each other.<br/><br/>
     No more waiting for the right moment.<br/>
-    No more "we'll do it soon."<br/>
     The right moment is right now.<br/><br/>
     I choose you, Mom.<br/>
     Every single time.
