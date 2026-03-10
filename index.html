@@ -414,9 +414,13 @@ function checkWord() {
   if (val === 'lilrenie') {
     document.getElementById('lock-screen').classList.add('hidden');
     document.body.style.overflow = '';
-    // Autoplay the song
-    var yt = document.getElementById('autoplay-song');
-    if (yt) yt.src = yt.src.replace('autoplay=0','autoplay=1');
+    // Show and play the floating music player
+    var player = document.getElementById('floating-player');
+    if (player) {
+      player.style.display = 'block';
+      var iframe = player.querySelector('iframe');
+      if (iframe) iframe.src = iframe.src.replace('autoplay=0','autoplay=1');
+    }
   } else {
     document.getElementById('lockError').textContent = 'That\'s not it, love. Try again. ♥';
     document.getElementById('lockInput').value = '';
@@ -428,6 +432,13 @@ document.getElementById('lockInput').addEventListener('keydown', function(e) {
 });
 document.body.style.overflow = 'hidden';
 </script>
+
+<!-- ══ FLOATING MUSIC PLAYER ══ -->
+<div id="floating-player" style="display:none; position:fixed; bottom:20px; right:20px; z-index:9998; background:rgba(26,10,46,0.95); border:1px solid rgba(232,180,255,0.4); border-radius:14px; padding:12px 14px; box-shadow:0 8px 30px rgba(0,0,0,0.5); width:280px;">
+  <p style="font-family:'Playfair Display',serif; font-style:italic; color:#e8b4ff; font-size:0.8rem; margin-bottom:8px; text-align:center;">🎵 Playing for you, Mom</p>
+  <iframe src="https://www.youtube.com/embed/RBRcPFBBFkk?autoplay=0&rel=0&modestbranding=1" style="width:100%; height:120px; border:none; border-radius:8px;" allowfullscreen allow="autoplay"></iframe>
+  <button onclick="document.getElementById('floating-player').style.display='none'" style="margin-top:8px; width:100%; background:transparent; border:1px solid rgba(232,180,255,0.3); color:rgba(255,255,255,0.5); font-size:0.75rem; padding:4px; border-radius:6px; cursor:pointer;">✕ Close player</button>
+</div>
 
 <!-- ══ HERO ══ -->
 <section class="hero">
