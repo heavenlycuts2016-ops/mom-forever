@@ -409,18 +409,80 @@
 </div>
 
 <script>
-function checkWord() {
-  var val = document.getElementById('lockInput').value.trim().toLowerCase();
-  if (val === 'lilrenie') {
-    document.getElementById('lock-screen').classList.add('hidden');
-    document.body.style.overflow = '';
-    // Show and play the floating music player
+var ttsUtterance = null;
+var ttsPaused = false;
+
+function getLetterText() {
+  var texts = [];
+  document.querySelectorAll('.letter-body p, .letter-body blockquote, .wins-grid p, .promise-text').forEach(function(el) {
+    texts.push(el.innerText);
+  });
+  if (texts.length === 0) {
+    document.querySelectorAll('p').forEach(function(el) {
+      var t = el.innerText.trim();
+      if (t.length > 30) texts.push(t);
+    });
+  }
+  return texts.join(' ');
+}
+
+function startTTS() {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  ttsUtterance = new SpeechSynthesisUtterance(getLetterText());
+  ttsUtterance.rate = 0.88;
+  ttsUtterance.pitch = 1.05;
+  ttsUtterance.volume = 1;
+  var voices = window.speechSynthesis.getVoices();
+  var preferred = voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('samantha') || v.name.toLowerCase().includes('karen') || v.name.toLowerCase().includes('victoria') || v.name.toLowerCase().includes('zira'));
+  if (preferred) ttsUtterance.voice = preferred;
+  ttsUtterance.onend = function() {
+    document.getElementById('tts-bar').style.display = 'none';
+    // Auto-play song after reading finishes
     var player = document.getElementById('floating-player');
     if (player) {
       player.style.display = 'block';
       var iframe = player.querySelector('iframe');
       if (iframe) iframe.src = iframe.src.replace('autoplay=0','autoplay=1');
     }
+  };
+  window.speechSynthesis.speak(ttsUtterance);
+  document.getElementById('tts-bar').style.display = 'block';
+  ttsPaused = false;
+  document.getElementById('tts-pause-btn').textContent = 'Pause';
+}
+
+function pauseResumeTTS() {
+  if (!window.speechSynthesis) return;
+  if (ttsPaused) {
+    window.speechSynthesis.resume();
+    ttsPaused = false;
+    document.getElementById('tts-pause-btn').textContent = 'Pause';
+  } else {
+    window.speechSynthesis.pause();
+    ttsPaused = true;
+    document.getElementById('tts-pause-btn').textContent = 'Resume';
+  }
+}
+
+function stopTTS() {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  document.getElementById('tts-bar').style.display = 'none';
+}
+
+function checkWord() {
+  var val = document.getElementById('lockInput').value.trim().toLowerCase();
+  if (val === 'lilrenie') {
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.body.style.overflow = '';
+    setTimeout(function() {
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = function() { startTTS(); };
+      } else {
+        startTTS();
+      }
+    }, 1200);
   } else {
     document.getElementById('lockError').textContent = 'That\'s not it, love. Try again. ♥';
     document.getElementById('lockInput').value = '';
@@ -432,6 +494,13 @@ document.getElementById('lockInput').addEventListener('keydown', function(e) {
 });
 document.body.style.overflow = 'hidden';
 </script>
+
+<!-- ══ TTS BAR ══ -->
+<div id="tts-bar" style="display:none; position:sticky; top:0; z-index:999; background:rgba(26,10,46,0.97); padding:10px 20px; text-align:center; border-bottom:1px solid rgba(232,180,255,0.3);">
+  <span style="color:#e8b4ff; font-size:0.85rem; font-style:italic; margin-right:10px;">🔊 Reading to you, Mom... 💜</span>
+  <button id="tts-pause-btn" onclick="pauseResumeTTS()" style="background:linear-gradient(135deg,#9b59b6,#6c3483); color:#fff; border:none; padding:7px 20px; border-radius:50px; font-size:0.85rem; cursor:pointer; margin:0 4px;">Pause</button>
+  <button onclick="stopTTS()" style="background:linear-gradient(135deg,#9b59b6,#6c3483); color:#fff; border:none; padding:7px 20px; border-radius:50px; font-size:0.85rem; cursor:pointer; margin:0 4px;">Stop</button>
+</div>
 
 <!-- ══ FLOATING MUSIC PLAYER ══ -->
 <div id="floating-player" style="display:none; position:fixed; bottom:20px; right:20px; z-index:9998; background:rgba(26,10,46,0.95); border:1px solid rgba(232,180,255,0.4); border-radius:14px; padding:12px 14px; box-shadow:0 8px 30px rgba(0,0,0,0.5); width:280px;">
